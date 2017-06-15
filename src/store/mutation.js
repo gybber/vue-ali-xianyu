@@ -24,7 +24,8 @@ const state = {
 	buyinfo: [],
 	curindex: 0,
 	fabuinfo: [],
-	show: true
+	show: true,
+	userinfo: {}
 }
 const mutations = {
 	setShow: (state, bool) =>{
@@ -147,6 +148,11 @@ const mutations = {
 		console.log(state.buyinfo[obj.index])
 		state.buyinfo[obj.index].del = obj.del
 		console.log(state.buyinfo[obj.index].del)
+	},
+	setUserinfo: (state, userinfo) =>{
+		window.localStorage.setItem('useravatar',userinfo.avatar)
+		state.userinfo = userinfo
+		console.log(state.userinfo)
 	}
 
 }

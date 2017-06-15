@@ -15,10 +15,13 @@
 	</div>
 	<div class="addrbox">
 		<div class="addr" @click="setaddr">
-			<label for="" class="label">收获地址</label>
-			<div class="address" v-if="addr.site !== undefined">
+			<label for="" class="label">收货地址</label>
+			<div class="address" v-if="addr.name != undefined">
 				<p class="user">{{addr.name}}{{addr.tel}}</p>
 				<p class="addrdetail">{{addr.site[0]}}{{addr.site[1]}}{{addr.site[2]}}{{addr.detail}}</p>
+			</div>
+			<div class="address" v-else>
+				<p class="addrdetail">请选择地址</p>
 			</div>
 		</div>
 		<div class="addr">
@@ -36,8 +39,7 @@
 </div>
 </template>
 <script>
-
-import   { MessageBox }  from 'mint-ui'
+import   { Toast,MessageBox }  from 'mint-ui'
 import {mapActions} from 'vuex'
 export default {
 	data () {
@@ -49,19 +51,22 @@ export default {
 	},
 	mounted () {
 		let str = this.$store.state.mutation.news.price
-		console.log(str)
 		let price = str.replace('￥','')
-		console.log(price)
 		this.news = this.$store.state.mutation.news
 		this.addr =this.$store.state.mutation.addr
 		this.all = parseFloat(price)+
 					parseFloat(this.$store.state.mutation.news.freight)
+		console.log(this.$store.state.mutation.addr)
 	},
 	methods: {
 		setaddr () {
 			this.$router.push({path:'/addr'})
 		},
 		pay () {
+			if(this.addr.name == undefined){
+				Toast('请选择收获地址')
+				return
+			}
 			console.log(this.news.id)
 			let length = this.$store.state.mutation.buyinfo.length
 			if( length ===0 ){
@@ -81,26 +86,24 @@ export default {
 			}
 		},
 		setbuyinfo (i) {
-			
-			MessageBox.alert('购买成功，查看订单').then(action => {
-
-					let Obj ={}
-					Obj.count = i
-					Obj.img = this.news.img
-					Obj.desc = this.news.desc
-					Obj.price = this.all
-					Obj.id = this.news.id
-					Obj.name = this.news.name
-					Obj.avatar = this.news.avatar
-					Obj.receive = true
-					Obj.del = false
-					console.log(Obj)
-					this.$store.dispatch('setBuynum')
-					this.$store.dispatch('setBuyinfo',Obj)
-				  	this.$router.push('/my')
-				  	this.$store.dispatch('setCurindex',4)
+				MessageBox.alert('购买成功，查看订单').then(action =>{
+						let Obj ={}
+						Obj.count = i
+						Obj.img = this.news.img
+						Obj.desc = this.news.desc
+						Obj.price = this.all
+						Obj.id = this.news.id
+						Obj.name = this.news.name
+						Obj.avatar = this.news.avatar
+						Obj.receive = true
+						Obj.del = false
+						console.log(Obj)
+						this.$store.dispatch('setBuynum')
+						this.$store.dispatch('setBuyinfo',Obj)
+					  	this.$router.push('/my')
+					  	this.$store.dispatch('setCurindex',4)
 					});
-		}
+			}
 	}
 }
 </script>
@@ -172,7 +175,7 @@ export default {
 .addr .label {
 	flex: 1;
 	font-size: 1.5rem;
-	color: #888;
+	color: #666;
 }
 .addr .address {
 	width: 20rem;
@@ -183,9 +186,7 @@ export default {
 	font-size: 1.3rem;
 	color: #888;
 	line-height: 1.2;
-
 }
-
 .addr .freight {
 	width: 80px;
 	color: red;

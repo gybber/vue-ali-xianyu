@@ -7,8 +7,9 @@
 						<div class="name">{{username}}</div>
 						<div class="somedesc">虽然没挣到钱，但在闲鱼开心就好</div>
 					</div>
-					<div class="useravatar">
-						<img src="../assets/images/头像.png" alt="" class="avatar">
+					<div class="useravatar" >
+						<img :src="url" alt="" class="avatar" @click="loadImg">
+						<input hidden type="file" accept="image/jpeg,image/jpg,image/png" capture="camera" @change="fileInput" >
 					</div>
 				</div>
 				<div class="flex">
@@ -78,12 +79,19 @@ export default {
 	components: {
 			NavBottom
 	},
+	data () {
+		return {
+			url: ''
+		}
+	},
 	mounted () {
 		this.$store.dispatch('setCurindex', 1)
 			console.log(this.$store.state.mutation.curindex)
 		let username = window.localStorage.getItem('username')
 		this.$store.dispatch('setUsername', username)
 		this.isLogin = this.$store.state.mutation.isLogin
+		console.log(window.localStorage.getItem('useravatar'))
+        this.url = window.localStorage.getItem('useravatar')
 		console.log(this.isLogin)
 		
 	},
@@ -112,6 +120,32 @@ export default {
 				this.$router.push({path: '/order'})
 			}
 			
+		},
+		loadImg () {
+		     let vm = this;
+		     let add = document.querySelector('input[type=file]')
+		     add.click()
+
+		     return false;
+		},
+		fileInput (e) {
+		     var files = e.target.files
+		     console.log(files)
+		     if(!files.length) return;
+		     this.createImage(files, e);
+		},
+	   	createImage (files, e) {
+		     let vm = this;
+		     // lrz图片先压缩在加载、
+		     this.lrz(files[0], { width: 480 }).then(function(rst) {
+		      vm.url = rst.base64;
+		      window.localStorage.setItem('useravatar',vm.url)
+		      return rst;
+		     }).always(function() {
+		     // 清空文件上传控件的值
+		     e.target.value = null;
+		     });
+
 		},
 	}
 }
@@ -178,8 +212,8 @@ ul,li {
 }
 .on{
 	border: none;
-	width: 70px;
-	height: 28px;
+	width: 7rem;
+	height: 2.8rem;
 	box-sizing: border-box;
 	border: 1px solid #333;
 	outline: none;
@@ -194,13 +228,13 @@ ul,li {
 }
 .border {
 	border-bottom: 1px solid #f8f8d8;
-	height: 100px;
+	height: 10rem;
 }
 .border:after {
 	content: '';
 	display: inline-block;
-	height: 8px;
-	width: 8px;
+	height: .8rem;
+	width: .8rem;
 	border-width: 2px 2px 0 0;
 	border-color:#999;
 	border-style: solid;
@@ -221,8 +255,8 @@ ul,li {
 	color: #888;
 }
 .useravatar {
-	width: 50px;
-	height: 50px;
+	width: 5rem;
+	height: 5rem;
 	background-color: #f9f9f9;
 	border-radius: 50%;
 	margin-right: 1.5rem;
@@ -232,8 +266,8 @@ ul,li {
 	justify-content: center;
 }
 .useravatar img{
-	width: 35px;
-	height: 35px;
+	width: 100%;
+	border-radius: 50%;
 }
 .numbox {
 	flex: 1;
@@ -260,8 +294,8 @@ ul,li {
 .head .animate {
 	position: absolute;
 	bottom: 0;
-	right: 30px;
-	width: 156px;
+	right: 3rem;
+	width: 15.6rem;
 	height: 100%;
 	background:#fff url('../assets/images/fish.png') no-repeat;
 	background-position: 100% 100%;
@@ -275,8 +309,8 @@ ul,li {
 .head .login {
 	margin-top: 1rem;
 	margin-left: 1.2rem;
-	width: 80px;
-	height: 36px;
+	width: 8rem;
+	height: 3.6rem;
 	background-color: #ffda44;
 	outline: none;
 	border: none;
@@ -294,7 +328,7 @@ ul,li {
 	box-sizing: border-box;
 	position: relative;
 	background-repeat: no-repeat;
-	background-size: 20px 20px;
+	background-size: 2rem 2rem;
 	background-position: 1rem 1rem;
 }
 .number {
@@ -308,8 +342,8 @@ ul,li {
 .item:after {
 	content: '';
 	display: inline-block;
-	height: 8px;
-	width: 8px;
+	height: .8rem;
+	width: .8rem;
 	border-width: 2px 2px 0 0;
 	border-color:#999;
 	border-style: solid;

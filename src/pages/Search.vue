@@ -5,7 +5,7 @@
 				<img  src="../assets/images/返回.png" alt="">
 			</div>
 			<div class="searchbox">
-				<input type="search" @keypress.enter="search(keywords)" v-model="keywords" placeholder="连衣裙">
+				<input type="search" autofocus @keypress.enter="search(keywords)" v-model="keywords" placeholder="连衣裙">
 			</div>
 			<div class="searchbtn">
 				<button class="search" @click="search(keywords)">搜索</button>
@@ -29,6 +29,7 @@
 	</div>
 </template>
 <script>
+import {Toast} from 'mint-ui'
 export default {
 	data () {
 		return {
@@ -42,6 +43,10 @@ export default {
 		search (keywords) {
 			this.items = ''
 			this.key = keywords
+			if(this.key == ''){
+				Toast('请输入要搜的宝贝~')
+				return
+			}
 			this.axios.get('https://easy-mock.com/mock/593f72288ac26d795ff1e570/search/results')
 			.then((res) => {
 				let result = res.data
@@ -51,6 +56,7 @@ export default {
 					console.log(item.indexOf(this.keywords))
 					if(item.indexOf(this.keywords) !== -1){
 						this.items = result[item]
+						return
 					}
 				}
 				if(this.items.length){

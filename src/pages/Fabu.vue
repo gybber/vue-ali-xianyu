@@ -9,6 +9,7 @@
 		<div class="block"></div>
 		<div class="thingbox" v-if="show"v-for="(item,index) in fabuinfo" key="item.id">
 			<div class="username">
+				<img :src="url" alt="">
 				<p class="name">{{username}}</p>
 				<p class="price">￥{{item.price}}</p>
 			</div>
@@ -49,6 +50,7 @@ export default {
 			username: '',
 			show: true,
 			hide: false,
+			url: '',
 			swiperOption: {
 	          slidesPerView: 'auto',
 	          spaceBetween: 30
@@ -56,6 +58,8 @@ export default {
 		}
 	},
 	mounted () {
+		console.log(window.localStorage.getItem('useravatar'))
+        this.url = window.localStorage.getItem('useravatar')
 		this.fabuinfo = this.$store.state.mutation.fabuinfo
 		console.log(this.fabuinfo)
 		this.username = this.$store.state.mutation.username
@@ -93,13 +97,13 @@ export default {
 
 	}
 }
-
 </script>
 <style lang="css" scoped>
 .wrap {
 	width: 100%;
 	height: 100vh;
 	background-color: #f7f7f7;
+	overflow-y: scroll;
 }
 .head {
 	width: 100%;
@@ -172,19 +176,22 @@ export default {
 	display: flex;
 	font-size: 1.4rem;
 	height: 5rem;
-	line-height: 5rem;
+	/*line-height: 5rem;*/
+	align-items: center;
 	padding: 0rem 1rem;
 	box-sizing: border-box;
 	border-bottom: 1px solid #f6f6f6;
-	
+}
+.username img {
+	width: 4rem;
+	height: 4rem;
+	border-radius: 50%;
 }
 .name {
-	background: url('../assets/images/头像.png') no-repeat;
-	background-size: 2.8rem 2.8rem;
 	flex:1;
 	color: #000;
 	font-weight: 700;
-	padding-left: 2.4rem;
+	padding-left: 1rem;
 	box-sizing: border-box;
 	background-position: 0 center;
 }
@@ -207,6 +214,7 @@ export default {
 }
 .swiper-slide img{
   width: 10rem;
+  height: 10rem;
 }
 .detail .desc{
 	font-size: 1.4rem;

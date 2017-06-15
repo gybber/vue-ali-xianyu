@@ -30,7 +30,7 @@
 <style lang="css" scoped>
 .banner{
     width: 100%;
-    height: 150px;
+    height: 15rem;
 }
 .banner img{
     width: 100%;

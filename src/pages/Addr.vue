@@ -10,7 +10,7 @@
 		<div class="addrbox">
 			<div class="set">
 				<label for="" class="label" >收货人</label>
-				<input type="text" v-model="name">
+				<input  type="text" v-model="name">
 			</div>
 			<div class="set">
 				<label for="" class="label">联系电话</label>
@@ -34,6 +34,7 @@
 </template>
 <script>
 import {mapActions} from 'vuex'
+import {Toast} from 'mint-ui'
 export default {
 	data () {
 		return {
@@ -47,7 +48,22 @@ export default {
 	methods: {
 		save () {
 			console.log(this.detail)
-			// console.log(this.addr)
+			if (this.name == '') {
+				Toast('请填写收货人姓名')
+				return
+			}
+			if (this.tel == '') {
+				Toast('请填写电话号码')
+				return
+			}
+			if (this.site.length == 0) {
+				Toast('请选择城市')
+				return
+			}
+			if (this.detail == '') {
+				Toast('请填写详细地址，让宝贝早点找到你')
+				return
+			}
 			var addr = {}
 			addr.name = this.name
 			addr.tel = this.tel
@@ -55,6 +71,7 @@ export default {
 			addr.site = this.site
 			console.log(addr.site[0])
 			this.$store.dispatch('setAddr',addr)
+			Toast('保存成功')
 			this.$router.push({path:'/pay'})
 			// console.log(this.$store.state.mu)
 		},

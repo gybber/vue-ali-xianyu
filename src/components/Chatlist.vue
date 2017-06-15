@@ -4,7 +4,7 @@
         <ul>
         <template v-for="item in talks">
             <li class="user" v-if="item.type==1">
-                <div class="chat-user"><img src="../assets/images/头像.png"></div>
+                <div class="chat-user"><img :src="url"></div>
                 <div class="time"><cite><i>{{item.time}}</i>{{name}}</cite></div>
                 <div class="text" v-html="replaceEmoj(item.content)"></div>
             </li>
@@ -32,8 +32,8 @@
         <span  class="send" v-on:click="sendMsg">发送</span>
     </div>
     <div class="emojbox">
-        <section class="selbox" :class="showBox>0?'show':'hide'">
-            <section v-show="showBox==1" class="emojs">
+        <div class="selbox" :class="showBox>0?'show':'hide'">
+            <div v-show="showBox==1" class="emojs">
                 <mt-swipe :auto="0" :continuous="false">
                     <mt-swipe-item v-for="n in Math.ceil(EXPS.length/18)">
                         <li v-for="(item, index) in getEXP(n,18)">
@@ -41,8 +41,8 @@
                         </li>
                     </mt-swipe-item>
                 </mt-swipe>
-            </section>
-        </section>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -59,12 +59,11 @@ export default {
     },
     data() {
         return {
-            showBox: 0,
+            showBox: 0, //0隐藏emoji 1显示emoji
             content:'',
-            topStatus: '',
-            // show: true,
             name: '',
-            //聊天记录
+            url: '',
+            //聊天对话
             talks: [{
                 type: 1,
                 time: util.formatDate.format(new Date(),'yyyy-MM-dd hh:mm:ss'),
@@ -108,6 +107,9 @@ export default {
     },
     mounted () {
         let username = window.localStorage.getItem('username')
+        console.log(window.localStorage.getItem('useravatar'))
+        this.url = window.localStorage.getItem('useravatar')
+        console.log(this.url)
         this.$store.dispatch('setUsername', username)
         this.talks[0].name = this.$store.state.mutation.username
         this.talks[1].name=this.news.name
@@ -115,31 +117,34 @@ export default {
         console.log(this.name)
         this.scrollToBottom();
         this.inputFocus();
+        
     },
     methods: {
-        getEXP (pageNow,pageSize) {
-            return this.EXPS.slice((pageNow - 1) * pageSize, pageSize * pageNow)
+        getEXP (pageCurrent,pageSize) {
+            return this.EXPS.slice((pageCurrent - 1) * pageSize, pageSize * pageCurrent)
         },
         //发送消息
         sendMsg () {
-            var _this=this;
+            var vm = this;
             if(this.content==''){
                 Toast('请输入消息');
                 return;
             }
-            _this.talks.push({
+            vm.talks.push({
                 type: 1,
                 time: util.formatDate.format(new Date(),'yyyy-MM-dd hh:mm:ss'),
                 content: this.content
             });
             setTimeout(function(){
-                _this.talks.push({
+                vm.talks.push({
                     type: 2,
                     time: util.formatDate.format(new Date(),'yyyy-MM-dd hh:mm:ss'),
                     content: '你好！'
                 });
             },100);
+            // 清空文本框
             this.content='';
+            // 当消息列表达到一定的高度
             this.scrollToBottom();  
             // this.changeBtn() 
         },
@@ -159,23 +164,21 @@ export default {
         //滚动条滚动到底部
         scrollToBottom () {
             setTimeout(function(){
-                var chatlist = document.getElementsByClassName('chatlist')[0];
-                chatlist.scrollTop=chatlist.scrollHeight;
-            },100);
+                var chatlists = document.querySelectorAll('.chatlist')
+                var chatlist = chatlists[0]
+                chatlist.scrollTop=chatlist.scrollHeight
+            },100)
         },
         //替换表情代码
         replaceEmoj (content) {
-            var _this=this;
+            var vm=this;
             var exps=this.EXPS;
             for(var i=0;i<exps.length;i++){
                 content = content.replace(exps[i].reg, '<img src="static/emotion/' + exps[i].file +'"  alt="" />');
             }
             return content;
-        },
-        handleTopChange (status) {
-            this.topStatus = status;
         }
-    },
+    }
 }
 </script>
 <style lang="css" scoped>
@@ -223,7 +226,6 @@ export default {
     position: absolute;
     left: .3rem;
 }
-
 .text,
 .chat-user {
     display: inline-block;
@@ -241,15 +243,13 @@ cite {
     left: auto;
     right: 6rem;
     text-align: right;
-} 
-cite {
     font-style: normal;
     line-height: 2.4rem;
     font-size: 1.2rem;
     white-space: nowrap;
     color: #999;
     text-align: left;
-}
+} 
 cite i {
     font-style: normal;
     padding-left: .5rem;
@@ -259,19 +259,18 @@ cite i {
 .user .text {
     margin-left: 0;
     text-align: left;
-    background-color: #33DF83;
+    background-color: #ffda44;
     color: #fff;
 }
 .text {
     position: relative;
-    line-height: 2.2rem;
-    /*margin-top: 25px;*/
+    line-height: 1rem;
     padding: 1rem 1.5rem;
-    background-color: #eee;
+    background-color: #fff;
     border-radius: 3px;
     color: #333;
     word-break: break-all;
-    max-width: 462px\9;
+    max-width: 46.2rem\9;
 }
 .text,
 .chat-user {
@@ -279,7 +278,6 @@ cite i {
     vertical-align: top;
     font-size: 14px;
 }
-
 .text img {
     max-width: 100%;
     vertical-align: middle;
@@ -290,20 +288,19 @@ cite i {
 }
 .text:after {
     content: '';
-    position: absolute;
-    left: -1rem;
-    top: 1.5rem;
     width: 0;
     height: 0;
-    border-style: solid dashed dashed;
-    border-color: #eee transparent transparent;
-    overflow: hidden;
+    position: absolute;
+    left: -1rem;
     border-width: 1rem;
+    border-style: solid dashed dashed;
+    border-color: #fff transparent transparent;
+    overflow: hidden;  
 }
 .user .text:after {
     left: auto;
     right: -1rem;
-    border-top-color: #33DF83;
+    border-top-color: #ffda44;
 }
 .foot {
     width: 100%;
@@ -379,6 +376,5 @@ cite i {
     text-align: center;
     line-height: 3rem;
     font-size: 1.4rem
-}   
-    
+}      
 </style>

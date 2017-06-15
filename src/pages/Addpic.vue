@@ -20,22 +20,19 @@
      <div class="list-img" v-show="hasPhoto" @click.stop="addPic">
        <img src="../assets/images/相机.png" />
        <span class="choosephoto">请选择或者拍照上传照片</span>
-       <input type="file" accept="image/jpeg,image/jpg,image/png" capture="camera" @change="fileInput" style="display: none;">
+       <input hidden type="file" accept="image/jpeg,image/jpg,image/png" capture="camera" @change="fileInput" >
      </div>
      <ul class="list-ul" v-show="!hasPhoto">
        <li class="list-li" v-for="(url, index) in imgUrls">
-         <a class="list-link" @click='previewImage(url)'>
+         <div class="list-link" >
           <img :src="url">
-         </a>
+         </div>
        <span class="cancleimg" @click='delImage(index)'></span>
        </li>
        <li class="list-li-add">
        <span class="add-img" @click.stop="addPic"></span>
        </li>
      </ul>
-    </div>
-    <div class="add-preview" v-show="isPreview" @click="closePreview">
-      <img :src="previewImg">
     </div>
     <div class="addr">
       <p class="localadress">{{addr}}</p>
@@ -124,17 +121,12 @@ import util from '../assets/js/util.js'
    data () {
      return {
        imgUrls: [],
-       urlArr: [],
        hasPhoto: true,
-       btnTitle: '',
-       isModify: false,
-       previewImg:'',
-       isPreview: false,
        addr: '',
        selected: true,
        id: '0',
        show: false,
-       kind: '请选择分类',
+       kind: '',
        items: '',
        price: '',
        primecost: '',
@@ -156,7 +148,7 @@ import util from '../assets/js/util.js'
       console.log(this.items)
    },
    watch: {
-     imgUrls: 'toggleAddPic'
+     imgUrls: 'showAddpic'
    },
    methods: {
      binddata (event) {
@@ -170,7 +162,6 @@ import util from '../assets/js/util.js'
          let contents = document.querySelectorAll('.inputbox .text')
          let value = event.currentTarget.dataset.value
          contents[this.id].innerHTML += value
-
      },
      del () {
         let contents = document.querySelectorAll('.inputbox .text')
@@ -210,15 +201,43 @@ import util from '../assets/js/util.js'
         this.$router.push({path: '/'})
         this.$store.dispatch('setCurindex', 0)
      },
-     toggleAddPic () {
-     let vm = this;
-     if(vm.imgUrls.length >= 1) {
-      vm.hasPhoto = false;
-     } else {
-      vm.hasPhoto = true;
-     }
+     showAddpic () {
+       let vm = this;
+       if(vm.imgUrls.length >= 1) {
+        vm.hasPhoto = false;
+       } else {
+        vm.hasPhoto = true;
+       }
    },
    publish () {
+      if(this.title == ''){
+        Toast('请输入发布的标题')
+        return;
+      }
+      if(this.desc == ''){
+        Toast('描述一下宝贝吧')
+        return;
+      }
+      if(this.imgUrls == ''){
+        MessageBox.alert('上传几张宝贝图片吧~~如果无法上传，请确定是否开启拍照权限，如果仍无效果，请移步其他浏览器')
+        return;
+      }
+      if(this.price == ''){
+        Toast('输入价钱')
+        return;
+      }
+      if(this.primecost == ''){
+        Toast('原价多少？')
+        return;
+      }
+      if(this.freight == ''){
+        Toast('邮费不能为空')
+        return;
+      }
+      if(this.kind == '') {
+        Toast('请选择分类')
+        return;
+      }
        MessageBox.alert('发布成功，去看看吧！').then(action => {
           let obj = {}
           obj.title = this.title
@@ -237,20 +256,19 @@ import util from '../assets/js/util.js'
           this.$store.dispatch('setCurindex',4)
         });
    },
-    selectItem (e) {
+   selectItem (e) {
       let name = e.currentTarget.dataset.name;
       this.kind = name
       this.hidden()
     },
-    hidden (){
+   hidden (){
        let mask1 = document.querySelector('.maskbox1')
         mask1.style.display = 'none'
-    },
+   },
    addPic (e) {
      let vm = this;
-     let add = document.querySelector('input[type=file')
+     let add = document.querySelector('input[type=file]')
      add.click()
-     console.log(add)
      return false;
    },
    fileInput (e) {
@@ -260,6 +278,7 @@ import util from '../assets/js/util.js'
    },
    createImage (file, e) {
      let vm = this;
+     // lrz图片先压缩在加载、
      this.lrz(file[0], { width: 480 }).then(function(rst) {
       vm.imgUrls.push(rst.base64);
       return rst;
@@ -273,29 +292,6 @@ import util from '../assets/js/util.js'
      vm.imgUrls.splice(index, 1);
 
    },
-   previewImage (url){
-     let vm = this;
-     vm.isPreview = true;
-     vm.previewImg = url;
-   },
-   closePreview: function(){
-     let vm = this;
-     vm.isPreview = false;
-     vm.previewImg = "";
-   },
-   // saveImage (){
-   //   let vm = this;
-   //   // let urlArr = [],
-   //   let imgUrls = []
-   //   imgUrls = this.imgUrls;
-   //   for(let i = 0; i < imgUrls.length; i++) {
-   //    if(imgUrls[i].indexOf('file') == -1) {
-   //    vm.urlArr.push(imgUrls[i].split(',')[1]);
-   //    } else {
-   //    vm.urlArr.push(imgUrls[i]);
-   //    }
-   //   }
-   //  },
     noprice () {
       Toast('贴子仅能在鱼塘发布，你附近没有鱼塘，去别的地方转转吧~')
     }

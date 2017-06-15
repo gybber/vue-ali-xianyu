@@ -21,7 +21,6 @@
 			</div>
 		</div>
 		<Chatlist :news="news"></Chatlist>
-		
 	</div>
 </template>
 <script>

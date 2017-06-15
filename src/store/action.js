@@ -113,5 +113,8 @@ export default {
 	setDel: ({commit}, obj) => {
 		commit('setDel', obj)
 	},
+	setUserinfo: ({commit}, userinfo) =>{
+		commit('setUserinfo', userinfo)
+	}
 
 }

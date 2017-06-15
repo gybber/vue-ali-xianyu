@@ -147,39 +147,39 @@ export default {
       },
     methods: {
         	top () {
-        		var osTop = document.documentElement.scrollTop || document.body.scrollTop; 
+        		var oTop = document.documentElement.scrollTop || document.body.scrollTop; 
         		var clientHeight = document.documentElement.clientHeight;
         		var obtn = document.getElementById('btn')
         		console.log(obtn)
-        		console.log(osTop)
+        		console.log(oTop)
         		console.log(clientHeight)
-		        if(osTop >= clientHeight){  //如果滚动高度大于可视区域高度，则显示回到顶部按钮
+		        if(oTop >= clientHeight){  //如果滚动高度大于可视区域高度，则显示回到顶部按钮
 		            obtn.style.display = 'block';
 		        }else{         //否则隐藏
 		            obtn.style.display = 'none';
 		        }
-
 		        //主要用于判断当 点击回到顶部按钮后 滚动条在回滚过程中，若手动滚动滚动条，则清除定时器
 		        if(!this.isTop){
 		            clearInterval(this.timer);
 		        }
 		        this.isTop = false;
 		  },
-		    totop () {
-		    	this.timer = setInterval(() => {
-	            //获取滚动条的滚动高度
-	            var osTop = document.documentElement.scrollTop || document.body.scrollTop;
-	            //用于设置速度差，产生缓动的效果
-	            var speed = Math.floor(-osTop / 6);
-	            document.documentElement.scrollTop = document.body.scrollTop = osTop + speed;
-	            this.isTop =true;  //用于阻止滚动事件清除定时器
-	            if(osTop == 0){
-	                clearInterval(this.timer);
-            	}
-        		},30);	
-    	}
+	    totop () {
+	    	this.timer = setInterval(() => {
+            //获取滚动条的滚动高度
+            var oTop = document.documentElement.scrollTop || document.body.scrollTop;
+            //用于设置速度差，产生缓动的效果
+            var speed = Math.floor(-oTop / 8);
+            document.documentElement.scrollTop = document.body.scrollTop = oTop + speed;
+            this.isTop =true;  //用于阻止滚动事件清除定时器
+            if(oTop == 0){
+                clearInterval(this.timer);
+          	}
+      		},20);	
+  	}
     },
     mounted() {
+      // 是当前滚动条位置在最初始的位置
       document.documentElement.scrollTop = document.body.scrollTop = 0
 			window.addEventListener('scroll', this.top,false)
 			this.$store.dispatch('setCurindex', 1)
