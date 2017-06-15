@@ -2,18 +2,18 @@
 <div>
 <div class="chatlist" :class="showBox>0?'popbox':'listbottom'">
         <ul>
-        <template v-for="item in talks">
+        <div v-for="item in talks">
             <li class="user" v-if="item.type==1">
                 <div class="chat-user"><img :src="url"></div>
-                <div class="time"><cite><i>{{item.time}}</i>{{name}}</cite></div>
+                <div class="time"><span><i>{{item.time}}</i>{{name}}</span></div>
                 <div class="text" v-html="replaceEmoj(item.content)"></div>
             </li>
             <li v-if="item.type==2">
                 <div class="chat-user"><img :src="news.avatar"></div>
-                <div class="time"><cite>{{news.name}}<i>{{item.time}}</i></cite></div>
+                <div class="time"><span>{{news.name}}<i>{{item.time}}</i></span></div>
                 <div class="text" v-html="replaceEmoj(item.content)"></div>
             </li>
-        </template>
+        </div>
         </ul>
 </div>
 <div class="block"></div>
@@ -207,16 +207,16 @@ export default {
 .chatlist ul {
     min-height: 30rem;
 }
-.chatlist ul .user {
-    text-align: right;
-    padding-left: 0;
-    padding-right: 6rem;
-}
 .chatlist ul li {
     position: relative;
     margin-bottom: 1rem;
     padding-left: 6rem;
     min-height: 6.8rem;
+}
+.chatlist ul .user {
+    text-align: right;
+    padding-left: 0;
+    padding-right: 6rem;
 }
 .user .chat-user {
     left: auto;
@@ -239,7 +239,7 @@ export default {
 .time {
     width: 100%;
 }
-cite {
+.time span {
     left: auto;
     right: 6rem;
     text-align: right;
@@ -250,7 +250,7 @@ cite {
     color: #999;
     text-align: left;
 } 
-cite i {
+.time span i {
     font-style: normal;
     padding-left: .5rem;
     padding-right: .5rem;
@@ -262,6 +262,12 @@ cite i {
     background-color: #ffda44;
     color: #fff;
 }
+.text,
+.chat-user {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+}
 .text {
     position: relative;
     line-height: 1rem;
@@ -272,20 +278,15 @@ cite i {
     word-break: break-all;
     max-width: 46.2rem\9;
 }
-.text,
 .chat-user {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 14px;
+    position: absolute;
+    left: .3rem;
 }
 .text img {
     max-width: 100%;
     vertical-align: middle;
 }
-.chat-user {
-    position: absolute;
-    left: .3rem;
-}
+/*三角形*/
 .text:after {
     content: '';
     width: 0;

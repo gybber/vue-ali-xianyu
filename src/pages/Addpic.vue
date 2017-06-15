@@ -666,20 +666,16 @@ import util from '../assets/js/util.js'
     background-position: 0 1.3rem;
 
 }
-        /*光标*/
 .inputbox .text.active::before{
     content: attr(data-content);
 }
-
 .inputbox .text.active::after{
     content: '';
     border-right: 2px solid #d9d9d9;
     height: 50%;
     opacity: 1;
-    animation: focus .7s forwards infinite;
-
+    animation: focus .6s forwards infinite;
 }
-/*闪烁动作*/
 @keyframes focus{
     from{
         opacity: 1;
